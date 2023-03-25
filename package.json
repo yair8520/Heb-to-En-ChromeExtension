@@ -1,0 +1,22 @@
+{
+  "name": "hebtoenextension",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --watch 'src/**/*.ts' --exec './node_modules/.bin/ts-node' src/background.ts",
+    "build": "tsc -p ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/chrome": "^0.0.225",
+    "chrome-aws-lambda": "^10.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2"
+  }
+}
