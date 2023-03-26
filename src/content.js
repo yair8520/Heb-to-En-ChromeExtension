@@ -1,5 +1,7 @@
 document.addEventListener("keydown", (event) => {
   if (event.ctrlKey && event.altKey) {
+    if (document.contains(document.getElementById("custom-alert")))
+      document.getElementById("custom-alert").remove();
     const selectedText = window.getSelection().toString().split("");
     let res = "";
     if (selectedText) {
@@ -8,33 +10,35 @@ document.addEventListener("keydown", (event) => {
           res += selectedText[i];
         } else res += qwerty_mapping[selectedText[i]];
       }
+
+      const alertBox = document.createElement("div");
+      alertBox.id = "custom-alert";
+
+      const content = document.createElement("div");
+      content.className = "custom-alert-content";
+      content.innerText = res;
+
+      const copyButton = document.createElement("button");
+      copyButton.className = "custom-alert-copy";
+      copyButton.innerText = "Copy";
+      copyButton.addEventListener("click", () => {
+        navigator.clipboard.writeText(res);
+        alertBox.remove();
+      });
+
+      alertBox.appendChild(content);
+      alertBox.appendChild(copyButton);
+      const closeButton = document.createElement("button");
+      closeButton.innerText = "Close";
+      closeButton.className = "custom-alert-close";
+      closeButton.addEventListener("click", () => {
+        alertBox.remove();
+      });
+      alertBox.appendChild(closeButton);
+
+      // Add the alert box to the DOM
+      document.body.appendChild(alertBox);
     }
-    const alertBox = document.createElement("div");
-    alertBox.id = "custom-alert";
-
-    const content = document.createElement("div");
-    content.className = "custom-alert-content";
-    content.innerText = res;
-
-    const copyButton = document.createElement("button");
-    copyButton.className = "custom-alert-copy";
-    copyButton.innerText = "Copy";
-    copyButton.addEventListener("click", () => {
-      navigator.clipboard.writeText(res);
-    });
-
-    alertBox.appendChild(content);
-    alertBox.appendChild(copyButton);
-    const closeButton = document.createElement("button");
-    closeButton.innerText = "Close";
-    closeButton.className = "custom-alert-close";
-    closeButton.addEventListener("click", () => {
-      alertBox.remove();
-    });
-    alertBox.appendChild(closeButton);
-
-    // Add the alert box to the DOM
-    document.body.appendChild(alertBox);
   }
 });
 
