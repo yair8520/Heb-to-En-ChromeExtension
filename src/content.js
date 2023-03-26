@@ -4,7 +4,7 @@ document.addEventListener("keydown", (event) => {
       document.getElementById("custom-alert").remove();
     const selectedText = window.getSelection().toString().split("");
     let res = "";
-    if (selectedText) {
+    if (selectedText.length !== 0) {
       for (let i = 0; i < selectedText.length; i++) {
         if (!qwerty_mapping[selectedText[i]]) {
           res += selectedText[i];
