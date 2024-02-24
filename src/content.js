@@ -1,47 +1,108 @@
-document.addEventListener("keydown", (event) => {
+document.addEventListener("keydown", handleKeyDown);
+document.addEventListener("click", handleOutsideClick);
+
+function handleKeyDown(event) {
   if (event.ctrlKey && event.altKey) {
-    if (document.contains(document.getElementById("custom-alert")))
-      document.getElementById("custom-alert").remove();
-    const selectedText = window.getSelection().toString().split("");
-    let res = "";
-    if (selectedText.length !== 0) {
-      for (let i = 0; i < selectedText.length; i++) {
-        if (!qwerty_mapping[selectedText[i]]) {
-          res += selectedText[i];
-        } else res += qwerty_mapping[selectedText[i]];
-      }
+    const activeElement = document.activeElement;
 
-      const alertBox = document.createElement("div");
-      alertBox.id = "custom-alert";
-
-      const content = document.createElement("div");
-      content.className = "custom-alert-content";
-      content.innerText = res;
-
-      const copyButton = document.createElement("button");
-      copyButton.className = "custom-alert-copy";
-      copyButton.innerText = "Copy";
-      copyButton.addEventListener("click", () => {
-        navigator.clipboard.writeText(res);
-        alertBox.remove();
-      });
-
-      alertBox.appendChild(content);
-      alertBox.appendChild(copyButton);
-      const closeButton = document.createElement("button");
-      closeButton.innerText = "Close";
-      closeButton.className = "custom-alert-close";
-      closeButton.addEventListener("click", () => {
-        alertBox.remove();
-      });
-      alertBox.appendChild(closeButton);
-
-      // Add the alert box to the DOM
-      document.body.appendChild(alertBox);
+    if (isInputOrTextarea(activeElement)) {
+      handleInputOrTextarea(activeElement);
+    } else {
+      handlePopup();
     }
   }
-});
+}
+function handleOutsideClick(event) {
+  const modal = document.getElementById("alert-modal");
+  if (modal && !modal.contains(event.target)) {
+    modal.remove();
+  }
+}
 
+function isInputOrTextarea(element) {
+  return element.tagName === "INPUT" || element.tagName === "TEXTAREA";
+}
+
+function handleInputOrTextarea(element) {
+  const selectedText = element.value.trim().split("")
+  const text = getTranslation(selectedText);
+  element.value = text;
+}
+
+function handlePopup() {
+  const customAlert = document.getElementById("alert-modal");
+  if (document.contains(customAlert)) {
+    customAlert.remove();
+  }
+
+  const selectedText = window.getSelection().toString().trim().split("");
+  const text = getTranslation(selectedText);
+  if (text) {
+    const alertBox = createAlertBox(text);
+    document.body.appendChild(alertBox);
+
+  }
+
+}
+
+function createAlertBox(text) {
+  const alertBox = document.createElement("div");
+  alertBox.id = "alert-modal";
+
+  const content = document.createElement("div");
+  content.className = "alert-modal-content";
+  content.innerText = text;
+
+  const buttonContainer = document.createElement("div");
+  buttonContainer.className = "button-modal-container";
+
+  const copyButton = createCopyButton(text, alertBox);
+  const closeButton = createCloseButton(alertBox);
+
+  buttonContainer.appendChild(copyButton);
+  buttonContainer.appendChild(closeButton);
+
+  alertBox.appendChild(content);
+  alertBox.appendChild(buttonContainer);
+
+  return alertBox;
+}
+
+
+function createCopyButton(text, alertBox) {
+  const copyButton = document.createElement("button");
+  copyButton.className = "alert-modal-copy";
+  copyButton.innerText = "Copy";
+  copyButton.addEventListener("click", () => {
+    navigator.clipboard.writeText(text);
+    alertBox.remove();
+  });
+
+  return copyButton;
+}
+
+function createCloseButton(alertBox) {
+  const closeButton = document.createElement("button");
+  closeButton.innerText = "Close";
+  closeButton.className = "alert-modal-close";
+  closeButton.addEventListener("click", () => {
+    alertBox.remove();
+  });
+
+  return closeButton;
+}
+
+
+const getTranslation = (selectedText) => {
+
+  let res = ""
+  for (let i = 0; i < selectedText.length; i++) {
+    if (!qwerty_mapping[selectedText[i]]) {
+      res += selectedText[i];
+    } else res += qwerty_mapping[selectedText[i]];
+  }
+  return res
+}
 const qwerty_mapping = {
   ת: ",",
   ",": "ת",
